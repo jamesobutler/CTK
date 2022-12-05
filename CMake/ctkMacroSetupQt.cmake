@@ -31,6 +31,7 @@ macro(ctkMacroSetupQt)
 
   if(CTK_QT_VERSION VERSION_GREATER "4")  # Qt5/Qt6
     cmake_minimum_required(VERSION 3.16.3)
+    set(CMAKE_PREFIX_PATH "C:/Qt/6.4.1/msvc2019_64/") # https://bugreports.qt.io/browse/QTBUG-97615
     set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS ON)  # Versionless functions requires Qt 5.15 and newer
     set(QT_NO_CREATE_VERSIONLESS_TARGETS ON)  # Versionless targets requires Qt 5.15 and newer
     # https://doc.qt.io/qt-6/cmake-qt5-and-qt6-compatibility.html#supporting-older-qt-5-versions
