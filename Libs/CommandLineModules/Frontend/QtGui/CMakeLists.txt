@@ -43,7 +43,7 @@ set(KIT_resources
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_target_libraries Qt5::UiTools Qt5::Widgets)
+  list(APPEND KIT_target_libraries Qt${QT_VERSION_MAJOR}::UiTools Qt${QT_VERSION_MAJOR}::Widgets)
 else()
   set(QT_USE_QTUITOOLS 1)
   include(${QT_USE_FILE})

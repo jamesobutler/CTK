@@ -30,7 +30,7 @@ class ctkTestPluginMTAttrPwdActivator :
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
-#ifdef HAVE_QT5
+#ifdef HAVE_QT${QT_VERSION_MAJOR}
   Q_PLUGIN_METADATA(IID "pluginAttrPwd_test")
 #endif
 

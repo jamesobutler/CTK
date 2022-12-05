@@ -49,7 +49,7 @@ if(NOT DEFINED qxmlrpc_DIR)
       )
   else()
     list(APPEND ep_cache_args
-      -DQt5_DIR:PATH=${Qt5_DIR}
+      -DQt${QT_VERSION_MAJOR}_DIR:PATH=${Qt${QT_VERSION_MAJOR}_DIR}
       )
     # XXX Backward compatible way
     if(DEFINED CMAKE_PREFIX_PATH)

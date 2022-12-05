@@ -97,7 +97,7 @@ function(ctkFunctionGeneratePluginManifest QRC_SRCS)
   configure_file("${CTK_CMAKE_DIR}/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
 
   if (CTK_QT_VERSION VERSION_GREATER "4")
-    QT5_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
+    QT${QT_VERSION_MAJOR}_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
   else()
     QT4_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
   endif()

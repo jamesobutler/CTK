@@ -32,7 +32,7 @@ class ctkTestPluginAActivator : public QObject,
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
-#ifdef HAVE_QT5
+#ifdef HAVE_QT${QT_VERSION_MAJOR}
   Q_PLUGIN_METADATA(IID "pluginA1_test")
 #endif
 

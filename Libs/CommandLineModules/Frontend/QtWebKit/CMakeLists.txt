@@ -37,10 +37,10 @@ set(KIT_resources
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  if(TARGET Qt5::WebKitWidgets)
-    list(APPEND KIT_target_libraries Qt5::WebKitWidgets)
+  if(TARGET Qt${QT_VERSION_MAJOR}::WebKitWidgets)
+    list(APPEND KIT_target_libraries Qt${QT_VERSION_MAJOR}::WebKitWidgets)
   else()
-    list(APPEND KIT_target_libraries Qt5::WebEngineWidgets)
+    list(APPEND KIT_target_libraries Qt${QT_VERSION_MAJOR}::WebEngineWidgets)
   endif()
 else()
   set(QT_USE_QTWEBKIT 1)

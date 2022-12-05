@@ -36,7 +36,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   # Enable Qt libraries PythonQt wrapping if required
   if(CTK_QT_VERSION VERSION_GREATER "4")
     list(APPEND ep_PythonQt_args
-      -DQt5_DIR:PATH=${Qt5_DIR}
+      -DQt${QT_VERSION_MAJOR}_DIR:PATH=${Qt${QT_VERSION_MAJOR}_DIR}
       )
     # XXX Backward compatible way
     if(DEFINED CMAKE_PREFIX_PATH)

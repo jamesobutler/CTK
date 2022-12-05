@@ -69,7 +69,7 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     list(APPEND additional_vtk_cmakevars
       -DVTK_QT_VERSION:STRING=5
       -DDESIRED_QT_VERSION:STRING=5
-      -DQt5_DIR:PATH=${Qt5_DIR}
+      -DQt${QT_VERSION_MAJOR}_DIR:PATH=${Qt${QT_VERSION_MAJOR}_DIR}
       )
     # XXX Backward compatible way
     if(DEFINED CMAKE_PREFIX_PATH)

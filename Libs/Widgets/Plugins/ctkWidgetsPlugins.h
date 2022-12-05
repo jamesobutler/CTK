@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QtGlobal>
-#ifndef HAVE_QT5
+#ifndef HAVE_QT${QT_VERSION_MAJOR}
 #include <QDesignerCustomWidgetCollectionInterface>
 #else
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
@@ -81,7 +81,7 @@ class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins
 {
   Q_OBJECT
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
-#ifdef HAVE_QT5
+#ifdef HAVE_QT${QT_VERSION_MAJOR}
   Q_PLUGIN_METADATA(IID "org.commontk.Widgets")
 #endif
 public:

@@ -17,7 +17,7 @@ add_library(${lib_name} SHARED ${PLUGIN_SRCS})
 if(CTK_QT_VERSION VERSION_LESS "5")
   target_link_libraries(${lib_name} ${QT_LIBRARIES})
 else()
-  target_link_libraries(${lib_name} Qt5::Core)
+  target_link_libraries(${lib_name} Qt${QT_VERSION_MAJOR}::Core)
 endif()
 
 # Apply properties to the library target.

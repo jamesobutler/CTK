@@ -28,15 +28,15 @@ set(Tests_MOC_CPP)
 set(Tests_UI_CPP)
 set(Tests_RESOURCES_SRCS)
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  QT5_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
-  QT5_GENERATE_MOCS(
+  QT${QT_VERSION_MAJOR}_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
+  QT${QT_VERSION_MAJOR}_GENERATE_MOCS(
     ctkCmdLineModuleFrontendQtGuiTest.cpp
     ctkCmdLineModuleQtXslTransformTest.cpp
     )
   if(TEST_UI_FORMS)
-    QT5_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})
+    QT${QT_VERSION_MAJOR}_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})
   endif()
-  QT5_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+  QT${QT_VERSION_MAJOR}_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 else()
   QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
   QT4_GENERATE_MOCS(
@@ -53,7 +53,7 @@ ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} $
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  target_link_libraries(${KIT}CppTests Qt5::Test)
+  target_link_libraries(${KIT}CppTests Qt${QT_VERSION_MAJOR}::Test)
 endif()
 
 #

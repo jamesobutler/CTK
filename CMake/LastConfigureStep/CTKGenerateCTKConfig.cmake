@@ -147,8 +147,8 @@ set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_DGRAPH_EXECUTABLE \"${DGraph_EXEC
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# Qt configuration\n")
 if(CTK_QT_VERSION STREQUAL "4")
   set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_QT_QMAKE_EXECUTABLE \"${QT_QMAKE_EXECUTABLE}\")\n") # FIXME: Just pass Qt version (and bitness?)
-elseif(DEFINED Qt5_DIR)
-  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_Qt5_DIR \"${Qt5_DIR}\")\n")
+elseif(DEFINED Qt${QT_VERSION_MAJOR}_DIR)
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_Qt${QT_VERSION_MAJOR}_DIR \"${Qt${QT_VERSION_MAJOR}_DIR}\")\n")
 elseif(DEFINED CMAKE_PREFIX_PATH)
   set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_CMAKE_PREFIX_PATH \"${CMAKE_PREFIX_PATH}\")\n")
 endif()
@@ -202,7 +202,7 @@ configure_package_config_file(
 # CTK external projects. We rely on externally set
 # _DIR variables or a proper CMAKE_PREFIX_PATH such
 # that find_dependency/find_package can successfully
-# find the external project. 
+# find the external project.
 set(CTK_SUPERBUILD_EP_VARS_CONFIG)
 foreach(varname ${CTK_EP_LABEL_FIND_PACKAGE})
   string(REPLACE "_DIR" "" package_name "${varname}")

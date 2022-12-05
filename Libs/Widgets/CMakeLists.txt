@@ -315,7 +315,7 @@ set(KIT_MOC_SRCS
   )
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_MOC_SRCS ctkIconEnginePlugin_qt5.h)
+  list(APPEND KIT_MOC_SRCS ctkIconEnginePlugin_qt${QT_VERSION_MAJOR}.h)
 else()
   list(APPEND KIT_MOC_SRCS ctkIconEnginePlugin_qt4.h)
 endif()
@@ -354,7 +354,7 @@ set(KIT_resources
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_target_libraries Qt5::Widgets Qt5::Xml Qt5::OpenGL)
+  list(APPEND KIT_target_libraries Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Xml Qt${QT_VERSION_MAJOR}::OpenGL)
 endif()
 
 # A player and a translator must be added for custom Qt widgets

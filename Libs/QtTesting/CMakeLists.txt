@@ -151,7 +151,7 @@ set(QtTesting_LIBRARIES QtTesting)
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_target_libraries Qt5::Xml Qt5::XmlPatterns)
+  list(APPEND KIT_target_libraries Qt${QT_VERSION_MAJOR}::Xml Qt${QT_VERSION_MAJOR}::XmlPatterns)
 endif()
 
 ctkMacroBuildLib(

@@ -29,9 +29,9 @@ include_directories(
 set(CTK_QT_TEST_LIBRARY )
 
 if (CTK_QT_VERSION VERSION_GREATER "4")
-  find_package(Qt5Test REQUIRED)
-  set(CTK_QT_TEST_LIBRARY Qt5::Test)
-  qt5_generate_mocs(${Tests_MOC_CPPS})
+  find_package(Qt${QT_VERSION_MAJOR}Test REQUIRED)
+  set(CTK_QT_TEST_LIBRARY Qt${QT_VERSION_MAJOR}::Test)
+  qt${QT_VERSION_MAJOR}_generate_mocs(${Tests_MOC_CPPS})
 else()
   qt4_generate_mocs(${Tests_MOC_CPPS})
 endif()

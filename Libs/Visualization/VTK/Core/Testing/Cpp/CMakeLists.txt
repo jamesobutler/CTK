@@ -41,8 +41,8 @@ set(KIT_HELPER_SRCS
   )
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  QT5_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
-  include_directories(${Qt5Widgets_INCLUDE_DIRS})
+  QT${QT_VERSION_MAJOR}_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
+  include_directories(${Qt${QT_VERSION_MAJOR}Widgets_INCLUDE_DIRS})
 else()
   QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
 endif()

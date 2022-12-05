@@ -33,7 +33,7 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   if(CTK_QT_VERSION VERSION_LESS "5")
     target_link_libraries(ctkDICOMApplicationTest1 ${QT_LIBRARIES})
   else()
-    target_link_libraries(ctkDICOMApplicationTest1 Qt5::Core)
+    target_link_libraries(ctkDICOMApplicationTest1 Qt${QT_VERSION_MAJOR}::Core)
   endif()
 
   ADD_TEST( NAME ctkDICOMApplicationTest1

@@ -5,11 +5,11 @@ include(MacroAddFileDependencies)
 
 function(_ctk_generate_mocs)
   if(CTK_QT_VERSION VERSION_GREATER "4")
-    if(Qt5_VERSION VERSION_LESS "5.15.0")
-      QT5_GET_MOC_FLAGS(_moc_flags)
+    if(Qt${QT_VERSION_MAJOR}_VERSION VERSION_LESS "5.15.0")
+      QT${QT_VERSION_MAJOR}_GET_MOC_FLAGS(_moc_flags)
     else()
        # _moc_flags is not needed because it is internally handled
-       # by qt5_generate_moc called below.
+       # by qt${QT_VERSION_MAJOR}_generate_moc called below.
     endif()
   else()
     QT4_GET_MOC_FLAGS(_moc_flags)
@@ -31,14 +31,14 @@ function(_ctk_generate_mocs)
     set(moc_file ${CMAKE_CURRENT_BINARY_DIR}/moc_${source_name}${source_ext})
 
     if(CTK_QT_VERSION VERSION_GREATER "4")
-      if(Qt5_VERSION VERSION_LESS "5.6")
-        QT5_CREATE_MOC_COMMAND(${abs_file} ${moc_file} "${_moc_flags}" "" "")
-      elseif(Qt5_VERSION VERSION_LESS "5.15.0")
-        QT5_CREATE_MOC_COMMAND(${abs_file} ${moc_file} "${_moc_flags}" "" "" "")
+      if(Qt${QT_VERSION_MAJOR}_VERSION VERSION_LESS "5.6")
+        QT${QT_VERSION_MAJOR}_CREATE_MOC_COMMAND(${abs_file} ${moc_file} "${_moc_flags}" "" "")
+      elseif(Qt${QT_VERSION_MAJOR}_VERSION VERSION_LESS "5.15.0")
+        QT${QT_VERSION_MAJOR}_CREATE_MOC_COMMAND(${abs_file} ${moc_file} "${_moc_flags}" "" "" "")
       else()
-        # qt5_generate_moc internally calls qt5_get_moc_flags and ensure
+        # qt${QT_VERSION_MAJOR}_generate_moc internally calls qt${QT_VERSION_MAJOR}_get_moc_flags and ensure
         # no warnings are reported.
-        qt5_generate_moc(${abs_file} ${moc_file})
+        qt${QT_VERSION_MAJOR}_generate_moc(${abs_file} ${moc_file})
       endif()
     else()
       QT4_CREATE_MOC_COMMAND(${abs_file} ${moc_file} "${_moc_flags}" "" "")
@@ -52,7 +52,7 @@ macro(QT4_GENERATE_MOCS)
   _ctk_generate_mocs(${ARGN})
 endmacro()
 
-# create a Qt5 alias
-macro(QT5_GENERATE_MOCS)
+# create a Qt5/Qt6 alias
+macro(QT${QT_VERSION_MAJOR}_GENERATE_MOCS)
   _ctk_generate_mocs(${ARGN})
 endmacro()

@@ -23,38 +23,36 @@ macro(ctkMacroSetupQt)
   set(CTK_QT_VERSION "4" CACHE STRING "Expected Qt version")
   mark_as_advanced(CTK_QT_VERSION)
 
-  set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 4 5)
+  set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 4 5 6)
 
-  if(NOT (CTK_QT_VERSION VERSION_EQUAL "4" OR CTK_QT_VERSION VERSION_EQUAL "5"))
-    message(FATAL_ERROR "Expected value for CTK_QT_VERSION is either '4' or '5'")
+  if(NOT (CTK_QT_VERSION VERSION_EQUAL "4" OR CTK_QT_VERSION VERSION_EQUAL "5" OR CTK_QT_VERSION VERSION_EQUAL "6"))
+    message(FATAL_ERROR "Expected value for CTK_QT_VERSION is either '4', '5', or '6'")
   endif()
 
-
-  if(CTK_QT_VERSION VERSION_GREATER "4")
-    cmake_minimum_required(VERSION 2.8.12)
-    find_package(Qt5 COMPONENTS Core)
-    set(CTK_QT5_COMPONENTS Core Xml XmlPatterns Concurrent Sql Test Multimedia)
+  if(CTK_QT_VERSION VERSION_GREATER "4")  # Qt5/Qt6
+    cmake_minimum_required(VERSION 3.16.3)
+    set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS ON)  # Versionless functions requires Qt 5.15 and newer
+    set(QT_NO_CREATE_VERSIONLESS_TARGETS ON)  # Versionless targets requires Qt 5.15 and newer
+    # https://doc.qt.io/qt-6/cmake-qt5-and-qt6-compatibility.html#supporting-older-qt-5-versions
+    find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)  # try to find Qt 6 first and if that fails, try to find Qt 5
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+    set(CTK_QT_COMPONENTS Core Xml XmlPatterns Concurrent Sql Test Multimedia)
     if(CTK_ENABLE_Widgets OR CTK_LIB_Widgets OR CTK_LIB_CommandLineModules/Frontend/QtGui OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
-      list(APPEND CTK_QT5_COMPONENTS Widgets OpenGL UiTools)
+      list(APPEND CTK_QT_COMPONENTS Widgets OpenGL UiTools)
     endif()
     if(CTK_LIB_CommandLineModules/Frontend/QtWebKit OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
-      if(TARGET Qt5::WebKitWidgets)
-        list(APPEND CTK_QT5_COMPONENTS WebKitWidgets)
+      if(TARGET Qt${QT_VERSION_MAJOR}::WebKitWidgets)
+        list(APPEND CTK_QT_COMPONENTS WebKitWidgets)
       else()
-        list(APPEND CTK_QT5_COMPONENTS WebEngineWidgets)
+        list(APPEND CTK_QT_COMPONENTS WebEngineWidgets)
       endif()
     endif()
-    if(CTK_LIB_XNAT/Core OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
-      list(APPEND CTK_QT5_COMPONENTS Script)
+    if(CTK_QT_VERSION VERSION_EQUAL "5")
+      if(CTK_LIB_XNAT/Core OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
+        list(APPEND CTK_QT_COMPONENTS Script)
+      endif()
     endif()
-    find_package(Qt5 COMPONENTS ${CTK_QT5_COMPONENTS} REQUIRED)
-
-    mark_as_superbuild(Qt5_DIR) # Qt 5
-
-    # XXX Backward compatible way
-    if(DEFINED CMAKE_PREFIX_PATH)
-      mark_as_superbuild(CMAKE_PREFIX_PATH) # Qt 5
-    endif()
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS ${CTK_QT_COMPONENTS} REQUIRED)
 
   else()
     set(minimum_required_qt_version "4.6")

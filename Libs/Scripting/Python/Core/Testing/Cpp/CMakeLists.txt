@@ -16,9 +16,9 @@ include_directories(${CMAKE_SOURCE_DIR}/Libs/Testing
 set(CTK_QT_TEST_LIBRARY )
 
 if (CTK_QT_VERSION VERSION_GREATER "4")
-  find_package(Qt5Test REQUIRED)
-  set(CTK_QT_TEST_LIBRARY Qt5::Test)
-  QT5_GENERATE_MOCS(
+  find_package(Qt${QT_VERSION_MAJOR}Test REQUIRED)
+  set(CTK_QT_TEST_LIBRARY Qt${QT_VERSION_MAJOR}::Test)
+  QT${QT_VERSION_MAJOR}_GENERATE_MOCS(
     ctkAbstractPythonManagerTest.cpp
     )
 else()
