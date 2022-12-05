@@ -21,10 +21,10 @@
 // Qt includes
 #include <QBuffer>
 #include <QImage>
-#include <QFile>
 #include <QGLWidget>
 #include <QIcon>
 #include <QPainter>
+#include <QSvgRenderer>
 #include <QWidget>
 
 // ctkWidgets includes
@@ -117,26 +117,26 @@ QImage ctk::kwIconToQImage(const unsigned char *data, int width, int height, int
 }
 
 //----------------------------------------------------------------------------
-QIcon ctk::getColorizedIcon(const QString& hexColor, const QString& resourcePath)
+QIcon ctk::getColorizedIcon(const QString& svgFile, const QColor& color)
 {
-  QIcon icon;
-  if (hexColor == "#000000")
-  {
-    // resource icons are already colored black by default
-    icon = QIcon(resourcePath);
-  }
-  else
-  {
-    QFile file(resourcePath);
-    file.open(QIODevice::ReadOnly);
-    QByteArray data = file.readAll();
-    QString newHexString = "fill=\"" + hexColor;
-    QByteArray newByteArray = newHexString.toLocal8Bit();
-    const char *newHexChar = newByteArray.data();
-    data.replace("fill=\"#000000", newHexChar);
-    QPixmap pixmap;
-    pixmap.loadFromData(data);
-    icon = QIcon(pixmap);
-  }
-  return icon;
+    // Load the SVG file using the QSvgRenderer class
+    QSvgRenderer svgRenderer(svgFile);
+
+    // Create a QImage to render the SVG file
+    QImage image(svgRenderer.defaultSize(), QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+
+    // Create a QPainter to draw on the QImage
+    QPainter painter(&image);
+
+    // Set the color to be used for rendering the SVG
+    painter.setBrush(color);
+
+    // Render the SVG file using the QSvgRenderer and QPainter
+    svgRenderer.render(&painter);
+
+    // Create a QIcon from the rendered image
+    QIcon qicon(QPixmap::fromImage(image));
+
+    return qicon;
 }

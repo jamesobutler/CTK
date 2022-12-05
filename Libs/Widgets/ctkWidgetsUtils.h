@@ -51,7 +51,7 @@ CTK_WIDGETS_EXPORT QImage kwIconToQImage(const unsigned char *data, int width, i
 ///
 /// \ingroup Widgets
 /// Get a colorized version of a SVG image
-CTK_WIDGETS_EXPORT QIcon getColorizedIcon(const QString& hexColor, const QString& resourcePath);
+CTK_WIDGETS_EXPORT QIcon getColorizedIcon(const QString& svgFile, const QColor& color);
 }
 
 #endif
