@@ -48,7 +48,17 @@ public:
       const ctkCollapsibleGroupBox* groupBox= qobject_cast<const ctkCollapsibleGroupBox*>(widget);
       if (groupBox)
         {
-        this->Superclass::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowUp : QStyle::PE_IndicatorArrowDown, opt, p, widget);
+        QSize indicatorSize = QSize(pixelMetric(QStyle::PM_IndicatorWidth, opt, widget),
+                                    pixelMetric(QStyle::PM_IndicatorHeight, opt, widget));
+        if (groupBox->isChecked())
+          {
+          this->Superclass::drawItemPixmap(p, opt->rect, Qt::AlignRight, QIcon(":Icons/expand_less_FILL0_wght400_GRAD0_opsz24.svg").pixmap(indicatorSize));
+          }
+        else
+          {
+          this->Superclass::drawItemPixmap(p, opt->rect, Qt::AlignRight, QIcon(":Icons/expand_more_FILL0_wght400_GRAD0_opsz24.svg").pixmap(indicatorSize));
+          }
+
         return;
         }
       }
@@ -224,7 +234,6 @@ void ctkCollapsibleGroupBox::expand(bool _expand)
       d->setChildVisibility(qobject_cast<QWidget*>(childObject));
       }
     }
-
 
   if (_expand)
     {

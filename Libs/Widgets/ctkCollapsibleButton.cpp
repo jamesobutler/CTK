@@ -592,11 +592,11 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
     }
   if (d->Collapsed)
     {
-    style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &indicatorOpt, &p, this);
+    style()->drawItemPixmap(&p, indicatorOpt.rect, Qt::AlignRight, QIcon(":Icons/expand_more_FILL0_wght400_GRAD0_opsz24.svg").pixmap(indicatorSize));
     }
   else
     {
-    style()->drawPrimitive(QStyle::PE_IndicatorArrowUp, &indicatorOpt, &p, this);
+    style()->drawItemPixmap(&p, indicatorOpt.rect, Qt::AlignRight, QIcon(":Icons/expand_less_FILL0_wght400_GRAD0_opsz24.svg").pixmap(indicatorSize));
     }
 
   // Draw Text
