@@ -92,7 +92,7 @@ macro(ctkMacroBuildQtPlugin)
     if(Qt5Core_VERSION VERSION_GREATER "5.2.0")
       set(target TARGET ${MY_LIBNAME})
     endif()
-    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} OPTIONS -DHAVE_QT5 ${target})
+    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} OPTIONS ${target})
 
     if(DEFINED MY_RESOURCES)
       qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
@@ -130,11 +130,7 @@ macro(ctkMacroBuildQtPlugin)
 
   # Apply properties to the library target.
   set(compile_flags "-DQT_PLUGIN")
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
-    set(compile_flags "${compile_flags} -DHAVE_QT5")
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
-  endif()
+
   set_target_properties(${lib_name}  PROPERTIES
     COMPILE_FLAGS "${compile_flags}"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${MY_PLUGIN_DIR}"

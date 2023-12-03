@@ -114,7 +114,7 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
     # moc files can get very long and can't be resolved by the MSVC compiler.
     if(CTK_QT_VERSION VERSION_EQUAL "5")
       foreach(moc_src ${MY_MOC_SRCS})
-        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
+        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
       endforeach()
     else()
       message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
