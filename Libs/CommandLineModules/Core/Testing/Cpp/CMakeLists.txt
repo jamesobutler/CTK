@@ -27,7 +27,7 @@ set(Tests_UI_CPP)
 set(Tests_RESOURCES_SRCS)
 if(CTK_QT_VERSION VERSION_EQUAL "5")
   QT5_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
-  QT5_GENERATE_MOCS(
+  QT_GENERATE_MOCS(
     ctkCmdLineModuleManagerTest.cpp
     ctkCmdLineModuleXmlProgressWatcherTest.cpp
     )
