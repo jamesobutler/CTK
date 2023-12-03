@@ -84,6 +84,12 @@ CTK supports the following versions of Qt:
     * C++11
     * VTK 9 or newer
     * PythonQt [patched-9](https://github.com/commontk/PythonQt/tree/patched-9) branch
+* Qt 6
+  * CMake options:
+    * `CTK_QT_VERSION` set to `6`
+    * `CMAKE_PREFIX_PATH` set to `C:\Qt\6.6.1\msvc2019_64` (or a similar path, depending on your operating system)
+  * Requirements
+    * C++17
 
 Unsupported:
 
