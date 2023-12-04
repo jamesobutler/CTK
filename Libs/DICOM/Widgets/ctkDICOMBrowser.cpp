@@ -36,6 +36,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QScreen>
 #include <QStringListModel>
 #include <QSettings>
 #include <QTableView>
@@ -108,7 +109,12 @@ public:
       this->restoreGeometry(savedGeometry);
       if (this->isMaximized())
       {
-        this->setGeometry(QApplication::desktop()->availableGeometry(this));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        QRect screen = this->screen()->availableGeometry();
+#else
+        QRect screen = QApplication::desktop()->availableGeometry(this);
+#endif
+        this->setGeometry(screen);
       }
     }
   }
