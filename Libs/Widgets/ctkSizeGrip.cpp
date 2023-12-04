@@ -225,8 +225,12 @@ QSize ctkSizeGrip::sizeHint() const
     };
   QStyleOption opt(0);
   opt.initFrom(this);
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
   return (this->style()->sizeFromContents(contents, &opt, minSize, this).
           expandedTo(QApplication::globalStrut()));
+#else
+  return this->style()->sizeFromContents(contents, &opt, minSize, this);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -358,7 +362,9 @@ void ctkSizeGrip::mouseMoveEvent(QMouseEvent * e)
       }
     }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
   widgetSizeHint = widgetSizeHint.expandedTo(QApplication::globalStrut());
+#endif
 
   this->setWidgetSizeHint(
     QSize(d->Orientations & Qt::Horizontal ? widgetSizeHint.width() : -1,
