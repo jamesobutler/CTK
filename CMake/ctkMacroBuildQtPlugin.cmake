@@ -192,8 +192,6 @@ endmacro()
 
 macro(ctkMacroBuildQtDesignerPlugin)
   find_package(Qt${CTK_QT_VERSION} COMPONENTS Designer REQUIRED)
-  add_definitions(${Qt${CTK_QT_VERSION}Designer_DEFINITIONS})
-  include_directories(${Qt${CTK_QT_VERSION}Designer_INCLUDE_DIRS})
   ctkMacroBuildQtPlugin(
     PLUGIN_DIR designer
     ${ARGN})
@@ -204,6 +202,10 @@ macro(ctkMacroBuildQtDesignerPlugin)
     ${ARGN}
     )
   target_link_libraries(${MY_NAME} Qt${CTK_QT_VERSION}::Designer)
+
+  if (CTK_QT_VERSION VERSION_GREATER "5")
+    target_link_libraries(${MY_NAME} Qt${CTK_QT_VERSION}::DesignerComponentsPrivate)
+  endif()
 endmacro()
 
 macro(ctkMacroBuildQtIconEnginesPlugin)

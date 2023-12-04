@@ -113,6 +113,10 @@ macro(ctkMacroSetupQt)
 
     if(CTK_BUILD_QTDESIGNER_PLUGINS)
       list(APPEND CTK_QT_COMPONENTS Designer)
+
+      if(CTK_QT_VERSION VERSION_GREATER "5")
+        list(APPEND CTK_QT_COMPONENTS DesignerComponentsPrivate)
+      endif()
     endif()
 
     if(CTK_LIB_XNAT/Core
