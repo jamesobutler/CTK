@@ -24,12 +24,12 @@
 // Qt includes 
 #include <QWidget>
 
+#include <ctkDICOMDatabase.h>
 #include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMAppWidgetPrivate;
 class ctkThumbnailLabel;
 class QModelIndex;
-class ctkDICOMDatabase;
 
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget

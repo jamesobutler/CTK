@@ -45,7 +45,6 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMBrowser.h"
-#include "ctkDICOMDatabase.h"
 #include "ctkDICOMFilterProxyModel.h"
 #include "ctkDICOMIndexer.h"
 #include "ctkDICOMModel.h"

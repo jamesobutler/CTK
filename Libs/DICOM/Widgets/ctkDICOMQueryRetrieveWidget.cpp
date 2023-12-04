@@ -30,7 +30,6 @@
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
-#include <ctkDICOMTableManager.h>
 #include <ctkCheckableModelHelper.h>
 #include <ctkLogger.h>
 

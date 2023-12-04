@@ -23,14 +23,13 @@
 
 // Qt includes
 #include <QItemSelection>
-#include <QWidget>
+#include <QTableView>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMTableViewPrivate;
-class QTableView;
 
 /**
  * @brief The ctkDICOMTableView displays the content of a specific table of the ctkDICOMDatabase

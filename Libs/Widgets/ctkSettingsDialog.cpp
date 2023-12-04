@@ -23,10 +23,8 @@
 #include <QMap>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QSettings>
 
 // CTK includes
-#include "ctkSettingsPanel.h"
 #include "ctkSettingsDialog.h"
 #include "ui_ctkSettingsDialog.h"
 #include "ctkLogger.h"

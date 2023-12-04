@@ -21,7 +21,6 @@
 
 #include "ctkServices_p.h"
 
-#include <QStringListIterator>
 #include <QMutexLocker>
 #include <QBuffer>
 

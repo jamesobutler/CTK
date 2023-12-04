@@ -21,7 +21,6 @@
 // Qt includes
 #include <QDebug>
 #include <QMetaProperty>
-#include <QSettings>
 #include <QSignalMapper>
 
 // CTK includes
