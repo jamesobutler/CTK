@@ -152,7 +152,7 @@ void ctkConsolePrivate::init()
   this->RunFileButton->setVisible(false);
 
   QVBoxLayout * layout = new QVBoxLayout(q);
-  layout->setMargin(0);
+  layout->setContentsMargins(QMargins());
   layout->setSpacing(0);
   layout->addWidget(this);
   layout->addWidget(this->RunFileButton);

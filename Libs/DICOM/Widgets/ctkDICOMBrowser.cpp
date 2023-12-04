@@ -75,7 +75,7 @@ public:
     this->setModal(true);
     this->setSizeGripEnabled(true);
     QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->setMargin(0);
+    layout->setContentsMargins(QMargins());
     this->tagListWidget = new ctkDICOMObjectListWidget();
     layout->addWidget(this->tagListWidget);
   }
