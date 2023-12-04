@@ -325,6 +325,7 @@ bool ctkPixmapIconEngine::write(QDataStream &out) const
     return true;
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 void ctkPixmapIconEngine::virtual_hook(int id, void *data)
 {
   switch (id) {
@@ -347,3 +348,4 @@ void ctkPixmapIconEngine::virtual_hook(int id, void *data)
       QIconEngine::virtual_hook(id, data);
     }
 }
+#endif

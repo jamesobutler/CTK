@@ -67,7 +67,9 @@ public:
     QIconEngine *clone() const;
     bool read(QDataStream &in);
     bool write(QDataStream &out) const;
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
     void virtual_hook(int id, void *data);
+#endif
 
 private:
     ctkPixmapIconEngineEntry *tryMatch(const QSize &size, QIcon::Mode mode, QIcon::State state);
