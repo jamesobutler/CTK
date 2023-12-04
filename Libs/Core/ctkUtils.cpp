@@ -21,7 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDir>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QString>
 #include <QStringList>
 
@@ -108,18 +108,19 @@ const char *ctkValidWildCard =
 //-----------------------------------------------------------------------------
 QStringList ctk::nameFilterToExtensions(const QString& nameFilter)
 {
-  QRegExp regexp(QString::fromLatin1(ctkNameFilterRegExp));
-  int i = regexp.indexIn(nameFilter);
-  if (i < 0)
+  QRegularExpression regexp(QString::fromLatin1(ctkNameFilterRegExp));
+  QRegularExpressionMatch match = regexp.match(nameFilter);
+  if (!match.hasMatch())
     {
-    QRegExp isWildCard(QString::fromLatin1(ctkValidWildCard));
-    if (isWildCard.indexIn(nameFilter) >= 0)
+    QRegularExpression isWildCard(QString::fromLatin1(ctkValidWildCard));
+    match = isWildCard.match(nameFilter);
+    if (match.hasMatch())
       {
       return QStringList(nameFilter);
       }
     return QStringList();
     }
-  QString f = regexp.cap(2);
+  QString f = match.captured(2);
   #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   return f.split(QLatin1Char(' '), Qt::SkipEmptyParts);
   #else
@@ -142,17 +143,17 @@ QStringList ctk::nameFiltersToExtensions(const QStringList& nameFilters)
 QString ctk::extensionToRegExp(const QString& extension)
 {
   // typically *.jpg
-  QRegExp extensionExtractor("\\*\\.(\\w+)");
-  int pos = extensionExtractor.indexIn(extension);
-  if (pos < 0)
+  QRegularExpression extensionExtractor("\\*\\.(\\w+)");
+  QRegularExpressionMatch match = extensionExtractor.match(extension);
+  if (!match.hasMatch())
     {
     return QString();
     }
-  return ".*\\." + extensionExtractor.cap(1) + "?$";
+  return ".*\\." + match.captured(1) + "?$";
 }
 
 //-----------------------------------------------------------------------------
-QRegExp ctk::nameFiltersToRegExp(const QStringList& nameFilters)
+QRegularExpression ctk::nameFiltersToRegExp(const QStringList& nameFilters)
 {
   QString pattern;
   foreach(const QString& nameFilter, nameFilters)
@@ -182,7 +183,7 @@ QRegExp ctk::nameFiltersToRegExp(const QStringList& nameFilters)
     {
     pattern += ")";
     }
-  return QRegExp(pattern);
+  return QRegularExpression(pattern);
 }
 
 //-----------------------------------------------------------------------------

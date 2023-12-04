@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QPointer>
+#include <QRegularExpression>
 #include <QStyle>
 
 // CTK includes
@@ -217,10 +218,10 @@ void ctkWorkflowWidget::updateButtonBoxUI(ctkWorkflowStep* currentStep)
 QVariant ctkWorkflowWidget::buttonItem(QString item,
                                        ctkWorkflowWidgetStep* step)
 {
-  QRegExp backRegExp("^[\\{\\(\\[]back:(.*)[\\}\\)\\]]$");
-  QRegExp nextRegExp("^[\\{\\(\\[]next:(.*)[\\}\\)\\]]$");
-  QRegExp currentRegExp("^[\\{\\(\\[]current:(.*)[\\}\\)\\]]$");
-  if (backRegExp.exactMatch(item))
+  QRegularExpression backRegExp("^[\\{\\(\\[]back:(.*)[\\}\\)\\]]$");
+  QRegularExpression nextRegExp("^[\\{\\(\\[]next:(.*)[\\}\\)\\]]$");
+  QRegularExpression currentRegExp("^[\\{\\(\\[]current:(.*)[\\}\\)\\]]$");
+  if (backRegExp.match(item).hasMatch())
     {
     QList<ctkWorkflowStep*> backs =
       (step ? step->workflow()->backwardSteps(step) : QList<ctkWorkflowStep*>());
@@ -228,7 +229,7 @@ QVariant ctkWorkflowWidget::buttonItem(QString item,
     item.remove("back:");
     return ctkWorkflowWidget::buttonItem(item, step);
     }
-  else if (nextRegExp.exactMatch(item))
+  else if (nextRegExp.match(item).hasMatch())
     {
     QList<ctkWorkflowStep*> nexts =
       step ? step->workflow()->forwardSteps(step) : QList<ctkWorkflowStep*>();
@@ -236,13 +237,14 @@ QVariant ctkWorkflowWidget::buttonItem(QString item,
     item.remove("next:");
     return ctkWorkflowWidget::buttonItem(item, step);
     }
-  else if (currentRegExp.exactMatch(item))
+  else if (currentRegExp.match(item).hasMatch())
     {
     item.remove("current:");
     }
   QVariant res;
-  QRegExp quotesRegExp("^\"(.*)\"$");
-  QRegExp propsRegExp("^[\\{\\(\\[](.*)[\\}\\)\\]]$");
+  QRegularExpression quotesRegExp("^\"(.*)\"$");
+  QRegularExpression propsRegExp("^[\\{\\(\\[](.*)[\\}\\)\\]]$");
+  QRegularExpressionMatch match;
   QStyle* style = (step ? step->style() : qApp->style());
   if (item == "[<-]")
     {
@@ -260,16 +262,16 @@ QVariant ctkWorkflowWidget::buttonItem(QString item,
     {
     res = QVariant(step ? step->workflow()->steps().count() : 0);
     }
-  else if (quotesRegExp.exactMatch(item))
+  else if ((match = quotesRegExp.match(item)).hasMatch())
     {
-    res = quotesRegExp.cap(1);
+    res = match.captured(1);
     }
-  else if (propsRegExp.exactMatch(item))
+  else if ((match = propsRegExp.match(item)).hasMatch())
     {
-    item = propsRegExp.cap(1);
-    if (quotesRegExp.exactMatch(item))
+    item = match.captured(1);
+    if ((match = quotesRegExp.match(item)).hasMatch())
       {
-      res = quotesRegExp.cap(1);
+      res = match.captured(1);
       }
     else
       {
@@ -327,24 +329,23 @@ QMap<QString, QVariant> ctkWorkflowWidget
   QString toolTipRegExp("\\([^\\(\\)]+\\)");
   QString iconRegExp("\\[[^\\[\\]]+\\]");
 
-  //QRegExp splitBrackets("\\{([^}]+)\\}");
-  //QRegExp splitBrackets("(\\{[^{}]+\\}|\\([^\\(\\)]+\\)|\"[^\"]+\")");
-  QRegExp splitBrackets(QString("(%1|%2|%3|%4)")
+  //QRegularExpression splitBrackets("\\{([^}]+)\\}");
+  //QRegularExpression splitBrackets("(\\{[^{}]+\\}|\\([^\\(\\)]+\\)|\"[^\"]+\")");
+  QRegularExpression splitBrackets(QString("(%1|%2|%3|%4)")
                         .arg(textRegExp).arg(simpleTextRegExp)
                         .arg(toolTipRegExp)
                         .arg(iconRegExp));
   QStringList brackets;
-  int pos = 0;
-  while ((pos = splitBrackets.indexIn(format, pos)) != -1)
+  QRegularExpressionMatchIterator matchIter = splitBrackets.globalMatch(format);
+  while (matchIter.hasNext())
     {
-    brackets << splitBrackets.cap(1);
-    pos += splitBrackets.matchedLength();
+    brackets << matchIter.next().captured(1);
     }
 
   foreach(const QString& withBracket, brackets)
     {
     bool isSimpleText =
-      QRegExp(QString("^") + simpleTextRegExp + QString("$")).exactMatch(withBracket);
+      QRegularExpression(QString("^") + simpleTextRegExp + QString("$")).match(withBracket).hasMatch();
 
     QString withoutBracket = withBracket.mid(1, withBracket.size() - 2);
     // If the item is empty, then check the next item. For example:
@@ -382,17 +383,17 @@ QMap<QString, QVariant> ctkWorkflowWidget
         break;
         }
       }
-    if (QRegExp(QString("^") + textRegExp + QString("$")).exactMatch(withBracket) ||
+    if (QRegularExpression(QString("^") + textRegExp + QString("$")).match(withBracket).hasMatch() ||
         isSimpleText)
       {
       buttonText += text;
       }
-    else if (QRegExp(QString("^") + iconRegExp + QString("$")).exactMatch(withBracket))
+    else if (QRegularExpression(QString("^") + iconRegExp + QString("$")).match(withBracket).hasMatch())
       {
       buttonIcon = icon;
       buttonIconAlignment = iconAlignment;
       }
-    else if (QRegExp(QString("^") + toolTipRegExp + QString("$")).exactMatch(withBracket))
+    else if (QRegularExpression(QString("^") + toolTipRegExp + QString("$")).match(withBracket).hasMatch())
       {
       buttonToolTip = text;
       }

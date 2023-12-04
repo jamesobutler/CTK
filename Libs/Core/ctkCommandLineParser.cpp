@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QPointer>
+#include <QRegularExpression>
 
 // CTK includes
 #include "ctkCommandLineParser.h"
@@ -122,8 +123,8 @@ bool CommandLineParserArgumentDescription::addParameter(const QString& value)
   if (!RegularExpression.isEmpty())
     {
     // Validate value
-    QRegExp regexp(this->RegularExpression);
-    if (!regexp.exactMatch(value))
+    QRegularExpression regexp(QString("^%1$").arg(this->RegularExpression));
+    if (!regexp.match(value).hasMatch())
       {
       return false;
       }

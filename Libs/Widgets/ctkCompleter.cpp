@@ -87,9 +87,12 @@ QStringList ctkCompleterPrivate::splitPath(const QString& s)
     case ctkCompleter::FilterWordStartsWith:
       {
       this->updateSortFilterProxyModel();
-      QRegExp regexp = QRegExp(QRegExp::escape(s));
-      regexp.setCaseSensitivity(q->caseSensitivity());
-      this->SortFilterProxyModel->setFilterRegExp(regexp);
+      QRegularExpression regexp(QRegularExpression::escape(s));
+      if (q->caseSensitivity() == Qt::CaseInsensitive)
+        {
+        regexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+        }
+      this->SortFilterProxyModel->setFilterRegularExpression(regexp);
       paths = QStringList();
       break;
       }
