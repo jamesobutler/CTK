@@ -28,6 +28,8 @@
 
 #include <stdexcept>
 
+#include <QTextDecoder>
+
 
 class ctkDICOMItemPrivate
 {

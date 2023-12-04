@@ -757,7 +757,7 @@ void ctkDICOMTableView::addSqlWhereCondition(const QString& column, const QStrin
 bool ctkDICOMTableView::removeSqlWhereCondition(const QString& column)
 {
   Q_D(ctkDICOMTableView);
-  return d->sqlWhereConditions.remove(column) > 0;
+  return d->sqlWhereConditions.remove(column) != 0;
 }
 
 //------------------------------------------------------------------------------

@@ -561,7 +561,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     return;
     }
 
-  if (this->CompleterShortcuts.contains(e->key() + e->modifiers()))
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    if (this->CompleterShortcuts.contains(e->keyCombination()))
+#else
+    if (this->CompleterShortcuts.contains(e->key() + e->modifiers()))
+#endif
     {
     e->accept();
     this->updateCompleter();

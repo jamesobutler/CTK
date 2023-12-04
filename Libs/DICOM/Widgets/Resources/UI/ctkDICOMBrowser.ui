@@ -359,10 +359,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>ActionRepair</sender>
+   <sender>ActionSend</sender>
    <signal>triggered()</signal>
    <receiver>ctkDICOMBrowser</receiver>
-   <slot>onRepairAction()</slot>
+   <slot>openSendDialog()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -375,10 +375,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>ActionSend</sender>
+   <sender>ActionRepair</sender>
    <signal>triggered()</signal>
    <receiver>ctkDICOMBrowser</receiver>
-   <slot>openSendDialog()</slot>
+   <slot>onRepairAction()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -406,5 +406,6 @@
   <slot>onAutoPlayCheckboxStateChanged(int)</slot>
   <slot>onThumbnailWidthSliderValueChanged(int)</slot>
   <slot>onRemoveAction()</slot>
+  <slot>onRepairAction()</slot>
  </slots>
 </ui>
