@@ -87,12 +87,24 @@ macro(ctkMacroBuildQtPlugin)
 
   # Wrap
   set(MY_QRC_SRCS "")
-  if(CTK_QT_VERSION VERSION_EQUAL "5")
+  if(CTK_QT_VERSION VERSION_GREATER "5")
+    qt_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} TARGET ${MY_LIBNAME})
+
+    if(DEFINED MY_RESOURCES)
+      qt_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+
+    if(Qt${CTK_QT_VERSION}Widgets_FOUND)
+      qt_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
+    elseif(MY_UI_FORMS)
+      message(WARNING "Argument UI_FORMS ignored because Qt${CTK_QT_VERSION}Widgets module was not specified")
+    endif()
+  else()
     set(target)
     if(Qt5Core_VERSION VERSION_GREATER "5.2.0")
       set(target TARGET ${MY_LIBNAME})
     endif()
-    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} OPTIONS ${target})
+    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} ${target})
 
     if(DEFINED MY_RESOURCES)
       qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
@@ -103,8 +115,6 @@ macro(ctkMacroBuildQtPlugin)
     elseif(MY_UI_FORMS)
       message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
     endif()
-  else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   source_group("Resources" FILES
