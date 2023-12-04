@@ -162,6 +162,10 @@ list(APPEND KIT_target_libraries
   Qt${CTK_QT_VERSION}::Sql
   )
 
+if(CTK_QT_VERSION VERSION_GREATER "5")
+  list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Core5Compat)
+endif()
+
 # Create a MANIFEST.MF resource for the PluginFramework library,
 # pretending that it is a plugin (the system plugin)
 ctkFunctionGeneratePluginManifest(KIT_SRCS

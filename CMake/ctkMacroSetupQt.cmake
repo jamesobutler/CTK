@@ -26,6 +26,10 @@ macro(ctkMacroSetupQt)
 
     set(CTK_QT_COMPONENTS Core)
 
+    if(CTK_QT_VERSION VERSION_GREATER "5")
+      list(APPEND CTK_QT_COMPONENTS StateMachine)
+    endif()
+
     # See https://github.com/commontk/CTK/wiki/Maintenance#updates-of-required-qt-components
 
     if(CTK_LIB_Widgets
@@ -55,6 +59,10 @@ macro(ctkMacroSetupQt)
       OR CTK_LIB_PluginFramework
       )
       list(APPEND CTK_QT_COMPONENTS Sql)
+
+      if(CTK_QT_VERSION VERSION_GREATER "5")
+        list(APPEND CTK_QT_COMPONENTS Core5Compat)
+      endif()
     endif()
 
     if(BUILD_TESTING)
@@ -75,6 +83,10 @@ macro(ctkMacroSetupQt)
 
     if(CTK_LIB_Widgets)
       list(APPEND CTK_QT_COMPONENTS OpenGL)
+
+      if(CTK_QT_VERSION VERSION_GREATER "5")
+        list(APPEND CTK_QT_COMPONENTS OpenGLWidgets)
+      endif()
     endif()
 
     if(CTK_APP_ctkCommandLineModuleExplorer

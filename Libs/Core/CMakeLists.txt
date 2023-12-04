@@ -138,6 +138,10 @@ ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Core)
 
+if(CTK_QT_VERSION VERSION_GREATER "5")
+  list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::StateMachine)
+endif()
+
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}

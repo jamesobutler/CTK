@@ -97,6 +97,10 @@ endif()
 
 list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Sql)
 
+if(CTK_QT_VERSION VERSION_GREATER "5")
+  list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Core5Compat)
+endif()
+
 # create a dcm query/retrieve service config file that points to the build dir
 set (DCMQRSCP_STORE_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing)
 configure_file( Resources/dcmqrscp.cfg.in dcmqrscp.cfg )
