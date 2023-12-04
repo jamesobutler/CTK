@@ -59,9 +59,9 @@ public:
 
   ctkDICOMDatabase* Database;
 
-  QMap<QString, QString> EmptyFieldNamesPatients;
-  QMap<QString, QString> EmptyFieldNamesStudies;
-  QMap<QString, QString> EmptyFieldNamesSeries;
+  QMultiMap<QString, QString> EmptyFieldNamesPatients;
+  QMultiMap<QString, QString> EmptyFieldNamesStudies;
+  QMultiMap<QString, QString> EmptyFieldNamesSeries;
 };
 
 
