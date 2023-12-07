@@ -41,7 +41,7 @@ macro(ctkMacroGeneratePluginResourceFile QRC_SRCS)
   if(CTK_QT_VERSION VERSION_EQUAL "5")
     QT5_ADD_RESOURCES(${QRC_SRCS} ${_qrc_filepath})
   else()
-    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
+    qt_add_resources(${QRC_SRCS} ${_qrc_filepath})
   endif()
 
 endmacro()
