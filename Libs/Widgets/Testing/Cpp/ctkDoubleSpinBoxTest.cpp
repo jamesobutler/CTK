@@ -73,6 +73,9 @@ private slots:
 
   void testDecimalPointAlwaysVisible();
   void testDecimalPointAlwaysVisible_data();
+
+  void testScientificNotation();
+  void testScientificNotation_data();
 };
 
 // ----------------------------------------------------------------------------
@@ -638,6 +641,57 @@ void ctkDoubleSpinBoxTester::testDecimalPointAlwaysVisible_data()
   QTest::newRow("ctkDoubleSpinBox::DecimalPointAlwaysVisible 0") << 0. << "0.";
   QTest::newRow("ctkDoubleSpinBox::DecimalsByValue 2") << 2. << "2.";
   QTest::newRow("ctkDoubleSpinBox::DecimalsByValue 1.01") << 1.01 << "1.";
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testScientificNotation()
+{
+  ctkDoubleSpinBox spinBox;
+  spinBox.setMinimum(-1e15);
+  spinBox.setMaximum(1e15);
+  spinBox.setDecimals(2);
+  spinBox.setDecimalsOption(ctkDoubleSpinBox::FixedDecimals);
+  spinBox.setNotation(ctkDoubleSpinBox::ScientificNotation);
+
+  QFETCH(double, value);
+  QFETCH(QString, expectedText);
+  QFETCH(double, expectedValue);
+
+  spinBox.setValue(value);
+  QCOMPARE(spinBox.text(), expectedText);
+
+  // Simulate typing the scientific text directly and confirm the parsed value.
+  spinBox.lineEdit()->setText(expectedText);
+  QTest::keyClick(&spinBox, Qt::Key_Return);
+  QCOMPARE(spinBox.value(), expectedValue);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testScientificNotation_data()
+{
+  QTest::addColumn<double>("value");
+  QTest::addColumn<QString>("expectedText");
+  QTest::addColumn<double>("expectedValue");
+
+  QTest::newRow("1e6")
+    << 1000000.0
+    << QLocale().toString(1000000.0, 'e', 2)
+    << 1000000.0;
+
+  QTest::newRow("1.5e3")
+    << 1500.0
+    << QLocale().toString(1500.0, 'e', 2)
+    << 1500.0;
+
+  QTest::newRow("0")
+    << 0.0
+    << QLocale().toString(0.0, 'e', 2)
+    << 0.0;
+
+  QTest::newRow("-2.5e-4")
+    << -0.00025
+    << QLocale().toString(-0.00025, 'e', 2)
+    << -0.00025;
 }
 
 // ----------------------------------------------------------------------------

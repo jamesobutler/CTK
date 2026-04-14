@@ -31,6 +31,7 @@
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLineEdit>
+#include <QRegularExpression>
 #include <QShortcut>
 #include <QSizePolicy>
 #include <QStyle>
@@ -132,7 +133,15 @@ double ctkQDoubleSpinBox::valueFromText(const QString &text) const
 QString ctkQDoubleSpinBox::textFromValue(double value) const
 {
   Q_D(const ctkDoubleSpinBox);
-  QString text = this->QDoubleSpinBox::textFromValue(value);
+  QString text;
+  if (d->Notation == ctkDoubleSpinBox::ScientificNotation)
+  {
+    text = this->locale().toString(value, 'e', this->decimals());
+  }
+  else
+  {
+    text = this->QDoubleSpinBox::textFromValue(value);
+  }
   if (text.isEmpty())
   {
     text = "0";
@@ -186,6 +195,7 @@ ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object)
     | ctkDoubleSpinBox::InsertDecimals;
   this->InvertedControls = false;
   this->SizeHintPolicy = ctkDoubleSpinBox::SizeHintByMinMax;
+  this->Notation = ctkDoubleSpinBox::StandardNotation;
   this->InputValue = 0.;
   this->InputRange[0] = 0.;
   this->InputRange[1] = 99.99;
@@ -402,6 +412,17 @@ double ctkDoubleSpinBoxPrivate
       state = QValidator::Intermediate;
     }
   }
+  // partial scientific notation (e.g. "1e", "-1e+") is intermediate
+  if (!ok && state == QValidator::Acceptable &&
+      this->Notation == ctkDoubleSpinBox::ScientificNotation)
+  {
+    static const QRegularExpression sciPartialRe(
+      "^[+-]?\\d*\\.?\\d*[eE][+-]?$");
+    if (sciPartialRe.match(text).hasMatch())
+    {
+      state = QValidator::Intermediate;
+    }
+  }
   // could be because of group separators:
   if (!ok && state == QValidator::Acceptable)
   {
@@ -448,7 +469,23 @@ double ctkDoubleSpinBoxPrivate
   {
     if (dec != -1)
     {
-      decimals = text.size() - (dec + 1);
+      // In scientific notation the exponent part (e.g. "e+06") must not be
+      // counted as decimal digits; only mantissa digits after the decimal
+      // point count.
+      int endOfMantissa = text.size();
+      if (this->Notation == ctkDoubleSpinBox::ScientificNotation)
+      {
+        int eIdx = text.indexOf('e');
+        if (eIdx == -1)
+        {
+          eIdx = text.indexOf('E');
+        }
+        if (eIdx != -1)
+        {
+          endOfMantissa = eIdx;
+        }
+      }
+      decimals = endOfMantissa - (dec + 1);
       if (decimals > q->decimals())
       {
         // With ReplaceDecimals on, key strokes replace decimal digits
@@ -1009,6 +1046,27 @@ ctkDoubleSpinBox::SizeHintPolicy ctkDoubleSpinBox::sizeHintPolicy() const
 {
   Q_D(const ctkDoubleSpinBox);
   return d->SizeHintPolicy;
+}
+
+//----------------------------------------------------------------------------
+void ctkDoubleSpinBox::setNotation(ctkDoubleSpinBox::Notation newNotation)
+{
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent && newNotation == d->Notation)
+  {
+    return;
+  }
+  d->Notation = newNotation;
+  // Invalidate cache and refresh the displayed text.
+  d->CachedText.clear();
+  this->setValueAlways(this->value());
+}
+
+//----------------------------------------------------------------------------
+ctkDoubleSpinBox::Notation ctkDoubleSpinBox::notation() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  return d->Notation;
 }
 
 //----------------------------------------------------------------------------

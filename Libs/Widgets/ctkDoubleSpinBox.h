@@ -90,6 +90,11 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   /// This property is true while the spinbox is setting a value.
   /// \sa isSettingValue()
   Q_PROPERTY(bool isSettingValue READ isSettingValue)
+  /// This property controls whether the spinbox displays and accepts values
+  /// in standard decimal notation or scientific (exponential) notation.
+  /// StandardNotation by default.
+  /// \sa Notation, notation(), setNotation()
+  Q_PROPERTY(Notation notation READ notation WRITE setNotation)
 
 public:
 
@@ -160,6 +165,17 @@ public:
     SizeHintByValue
   };
   Q_ENUM(SizeHintPolicy)
+
+  /// Notation enum that controls the numeric format of the spinbox.
+  /// \sa notation, setNotation(), notation()
+  enum Notation
+  {
+    /// Standard decimal notation (e.g. "1000000"). Default.
+    StandardNotation,
+    /// Scientific (exponential) notation (e.g. "1e+06").
+    ScientificNotation
+  };
+  Q_ENUM(Notation)
 
   typedef QWidget Superclass;
 
@@ -275,6 +291,13 @@ public:
   /// Return the sizeHintPolicy property value.
   /// \sa sizeHintPolicy
   SizeHintPolicy sizeHintPolicy()const;
+
+  /// Set the notation property value.
+  /// \sa notation
+  void setNotation(Notation newNotation);
+  /// Return the notation property value.
+  /// \sa notation
+  Notation notation()const;
 
   /// Install or remove a value proxy filter. The value proxy decouples the
   /// displayed value from the value retrieved by the value property.

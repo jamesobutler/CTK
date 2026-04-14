@@ -44,6 +44,7 @@ ctkCoordinatesWidgetPrivate
   this->ReadOnly = false;
   ctkDoubleSpinBox temp;
   this->DecimalsOption = temp.decimalsOption();
+  this->Notation = temp.notation();
   this->SingleStep = 1.;
   this->Minimum = -std::numeric_limits<double>::max();
   this->Maximum = std::numeric_limits<double>::max();
@@ -79,6 +80,7 @@ void ctkCoordinatesWidgetPrivate::addSpinBox()
   ctkDoubleSpinBox* spinBox = new ctkDoubleSpinBox(q);
   spinBox->setDecimals(this->Decimals);
   spinBox->setDecimalsOption(this->DecimalsOption);
+  spinBox->setNotation(this->Notation);
   spinBox->setSingleStep(this->SingleStep);
   spinBox->setMinimum(this->Minimum);
   spinBox->setMaximum(this->Maximum);
@@ -432,6 +434,25 @@ void ctkCoordinatesWidget
     this->spinBox(i)->setDecimalsOption(newDecimalsOption);
   }
   d->DecimalsOption = newDecimalsOption;
+}
+
+// --------------------------------------------------------------------------
+ctkDoubleSpinBox::Notation ctkCoordinatesWidget::notation()const
+{
+  Q_D(const ctkCoordinatesWidget);
+  return d->Notation;
+}
+
+// --------------------------------------------------------------------------
+void ctkCoordinatesWidget
+::setNotation(ctkDoubleSpinBox::Notation newNotation)
+{
+  Q_D(ctkCoordinatesWidget);
+  for (int i = 0; i < d->Dimension; ++i)
+  {
+    this->spinBox(i)->setNotation(newNotation);
+  }
+  d->Notation = newNotation;
 }
 
 //------------------------------------------------------------------------------

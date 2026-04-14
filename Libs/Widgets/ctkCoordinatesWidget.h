@@ -53,6 +53,11 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   /// This property provides more controls over the decimals.
   /// \sa ctkDoubleSpinBox::DecimalsOptions, decimals
   Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
+  /// This property controls whether the spinboxes display and accept values in
+  /// standard decimal notation or scientific (exponential) notation.
+  /// ctkDoubleSpinBox::StandardNotation by default.
+  /// \sa ctkDoubleSpinBox::Notation
+  Q_PROPERTY(ctkDoubleSpinBox::Notation notation READ notation WRITE setNotation)
 
   Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
   /// This property controls the minimum value of the spinboxes.
@@ -95,6 +100,13 @@ public:
   /// Set the decimalsOption property value.
   /// \sa decimalsOption
   void setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions option);
+
+  /// Return the notation property value.
+  /// \sa notation
+  ctkDoubleSpinBox::Notation notation()const;
+  /// Set the notation property value.
+  /// \sa notation
+  void setNotation(ctkDoubleSpinBox::Notation notation);
 
   /// Set/Get the single step of each coordinate spin box
   /// The default single step is 1.

@@ -89,6 +89,7 @@ public:
   ctkDoubleSpinBox::DecimalsOptions DOption;
   bool InvertedControls;
   ctkDoubleSpinBox::SizeHintPolicy SizeHintPolicy;
+  ctkDoubleSpinBox::Notation Notation;
 
   double InputValue;
   double InputRange[2];
