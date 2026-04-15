@@ -58,6 +58,8 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   /// ctkDoubleSpinBox::StandardNotation by default.
   /// \sa ctkDoubleSpinBox::Notation
   Q_PROPERTY(ctkDoubleSpinBox::Notation notation READ notation WRITE setNotation)
+  /// \sa ctkDoubleSpinBox::notationThreshold
+  Q_PROPERTY(int notationThreshold READ notationThreshold WRITE setNotationThreshold)
 
   Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
   /// This property controls the minimum value of the spinboxes.
@@ -107,6 +109,13 @@ public:
   /// Set the notation property value.
   /// \sa notation
   void setNotation(ctkDoubleSpinBox::Notation notation);
+
+  /// Return the notationThreshold property value.
+  /// \sa notationThreshold
+  int notationThreshold() const;
+  /// Set the notationThreshold property value.
+  /// \sa notationThreshold
+  void setNotationThreshold(int threshold);
 
   /// Set/Get the single step of each coordinate spin box
   /// The default single step is 1.

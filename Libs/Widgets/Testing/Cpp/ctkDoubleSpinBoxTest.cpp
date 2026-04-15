@@ -76,6 +76,12 @@ private slots:
 
   void testScientificNotation();
   void testScientificNotation_data();
+
+  void testScientificNotationThreshold();
+  void testScientificNotationThreshold_data();
+
+  void testScientificNotationInput();
+  void testScientificNotationInput_data();
 };
 
 // ----------------------------------------------------------------------------
@@ -692,6 +698,122 @@ void ctkDoubleSpinBoxTester::testScientificNotation_data()
     << -0.00025
     << QLocale().toString(-0.00025, 'e', 2)
     << -0.00025;
+}
+
+// ----------------------------------------------------------------------------
+// Tests for notationThreshold: values below threshold display as fixed,
+// values at/above threshold display as scientific.
+void ctkDoubleSpinBoxTester::testScientificNotationThreshold()
+{
+  ctkDoubleSpinBox spinBox;
+  spinBox.setMinimum(-1e15);
+  spinBox.setMaximum(1e15);
+  spinBox.setDecimals(2);
+  spinBox.setDecimalsOption(ctkDoubleSpinBox::FixedDecimals);
+  spinBox.setNotation(ctkDoubleSpinBox::AutoNotation);
+  spinBox.setNotationThreshold(5); // |exp| >= 5 -> scientific
+
+  QFETCH(double, value);
+  QFETCH(QString, expectedText);
+  QFETCH(double, expectedValue);
+
+  spinBox.setValue(value);
+  QCOMPARE(spinBox.text(), expectedText);
+  QCOMPARE(spinBox.value(), expectedValue);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testScientificNotationThreshold_data()
+{
+  QTest::addColumn<double>("value");
+  QTest::addColumn<QString>("expectedText");
+  QTest::addColumn<double>("expectedValue");
+
+  // exp=6 >= 5 -> scientific
+  QTest::newRow("1e6 -> scientific")
+    << 1000000.0
+    << QLocale().toString(1000000.0, 'e', 2)
+    << 1000000.0;
+
+  // exp=4 < 5 -> fixed, 2 decimal places
+  QTest::newRow("10000 -> fixed")
+    << 10000.0
+    << QLocale().toString(10000.0, 'f', 2)
+    << 10000.0;
+
+  // exp=5 >= 5 -> scientific
+  QTest::newRow("1e-5 -> scientific")
+    << 0.00001
+    << QLocale().toString(0.00001, 'e', 2)
+    << 0.00001;
+
+  // exp=3 < 5 -> fixed, significantDecimals gives enough places automatically
+  QTest::newRow("0.000123 -> fixed with auto decimals")
+    << 0.000123
+    << QLocale().toString(0.000123, 'f', 6) // significantDecimals(0.000123, 2) = 6
+    << 0.000123;
+
+  // zero -> fixed (no meaningful exponent)
+  QTest::newRow("0 -> fixed")
+    << 0.0
+    << QLocale().toString(0.0, 'f', 2)
+    << 0.0;
+
+  // negative, exp=4 < 5 -> fixed
+  QTest::newRow("-10000 -> fixed")
+    << -10000.0
+    << QLocale().toString(-10000.0, 'f', 2)
+    << -10000.0;
+}
+
+// ----------------------------------------------------------------------------
+// Tests that the user can type scientific or fixed-format input freely when
+// AutoNotation is active, without being blocked by the decimals() limit.
+void ctkDoubleSpinBoxTester::testScientificNotationInput()
+{
+  ctkDoubleSpinBox spinBox;
+  spinBox.setMinimum(-1e15);
+  spinBox.setMaximum(1e15);
+  spinBox.setDecimals(2);
+  spinBox.setDecimalsOption(ctkDoubleSpinBox::FixedDecimals);
+  spinBox.setNotation(ctkDoubleSpinBox::AutoNotation);
+  spinBox.setNotationThreshold(5);
+
+  QFETCH(QString, inputText);
+  QFETCH(double, expectedValue);
+
+  // Simulate the user typing the value and pressing Enter.
+  spinBox.lineEdit()->setText(inputText);
+  QTest::keyClick(&spinBox, Qt::Key_Return);
+  QCOMPARE(spinBox.value(), expectedValue);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testScientificNotationInput_data()
+{
+  QTest::addColumn<QString>("inputText");
+  QTest::addColumn<double>("expectedValue");
+
+  // Long mantissa in sci format (more digits than decimals=2) must be accepted
+  QTest::newRow("1.234e5 accepted")
+    << QString("1.234e5")
+    << 123400.0;
+
+  // Small fixed-format input with more digits than decimals=2 must be accepted
+  // and value() must not return 0.
+  QTest::newRow("0.0000123 accepted, value non-zero")
+    << QString("0.0000123")
+    << 0.0000123;
+
+  // Standard 2-decimal sci input still works
+  QTest::newRow("1.23e4 accepted")
+    << QString("1.23e4")
+    << 12300.0;
+
+  // Fixed format within threshold still accepted
+  QTest::newRow("9999.99 accepted")
+    << QString("9999.99")
+    << 9999.99;
 }
 
 // ----------------------------------------------------------------------------

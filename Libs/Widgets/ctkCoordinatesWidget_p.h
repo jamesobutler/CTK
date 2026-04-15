@@ -63,6 +63,7 @@ public:
   int     Decimals;
   ctkDoubleSpinBox::DecimalsOptions DecimalsOption;
   ctkDoubleSpinBox::Notation Notation;
+  int NotationThreshold;
   double  SingleStep;
   double  Minimum;
   double  Maximum;

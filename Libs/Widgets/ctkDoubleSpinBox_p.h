@@ -90,6 +90,7 @@ public:
   bool InvertedControls;
   ctkDoubleSpinBox::SizeHintPolicy SizeHintPolicy;
   ctkDoubleSpinBox::Notation Notation;
+  int NotationThreshold;
 
   double InputValue;
   double InputRange[2];

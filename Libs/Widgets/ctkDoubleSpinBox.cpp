@@ -24,6 +24,9 @@
 #include "ctkValueProxy.h"
 #include "ctkPimpl.h"
 
+// STL includes
+#include <cmath>
+
 // Qt includes
 #include <QApplication>
 #include <QDebug>
@@ -138,6 +141,29 @@ QString ctkQDoubleSpinBox::textFromValue(double value) const
   {
     text = this->locale().toString(value, 'e', this->decimals());
   }
+  else if (d->Notation == ctkDoubleSpinBox::AutoNotation)
+  {
+    bool useScientific = true;
+    if (d->NotationThreshold > 0)
+    {
+      // Use the absolute exponent to decide: values where |exponent| < threshold
+      // are shown in fixed notation for easier reading.
+      // E.g. threshold=5: 10000 (exp=4) -> fixed, 100000 (exp=5) -> scientific.
+      if (value == 0.0)
+      {
+        useScientific = false; // zero has no meaningful exponent; display as fixed
+      }
+      else
+      {
+        int exp = static_cast<int>(std::floor(std::log10(std::fabs(value))));
+        useScientific = (std::abs(exp) >= d->NotationThreshold);
+      }
+    }
+    text = useScientific
+      ? this->locale().toString(value, 'e', this->decimals())
+      : this->locale().toString(value, 'f',
+          ctk::significantDecimals(value, this->decimals()));
+  }
   else
   {
     text = this->QDoubleSpinBox::textFromValue(value);
@@ -196,6 +222,7 @@ ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object)
   this->InvertedControls = false;
   this->SizeHintPolicy = ctkDoubleSpinBox::SizeHintByMinMax;
   this->Notation = ctkDoubleSpinBox::StandardNotation;
+  this->NotationThreshold = 5;
   this->InputValue = 0.;
   this->InputRange[0] = 0.;
   this->InputRange[1] = 99.99;
@@ -414,7 +441,8 @@ double ctkDoubleSpinBoxPrivate
   }
   // partial scientific notation (e.g. "1e", "-1e+") is intermediate
   if (!ok && state == QValidator::Acceptable &&
-      this->Notation == ctkDoubleSpinBox::ScientificNotation)
+      (this->Notation == ctkDoubleSpinBox::ScientificNotation ||
+       this->Notation == ctkDoubleSpinBox::AutoNotation))
   {
     static const QRegularExpression sciPartialRe(
       "^[+-]?\\d*\\.?\\d*[eE][+-]?$");
@@ -473,7 +501,8 @@ double ctkDoubleSpinBoxPrivate
       // counted as decimal digits; only mantissa digits after the decimal
       // point count.
       int endOfMantissa = text.size();
-      if (this->Notation == ctkDoubleSpinBox::ScientificNotation)
+      if (this->Notation == ctkDoubleSpinBox::ScientificNotation ||
+          this->Notation == ctkDoubleSpinBox::AutoNotation)
       {
         int eIdx = text.indexOf('e');
         if (eIdx == -1)
@@ -486,7 +515,21 @@ double ctkDoubleSpinBoxPrivate
         }
       }
       decimals = endOfMantissa - (dec + 1);
-      if (decimals > q->decimals())
+
+      // When ScientificNotation or AutoNotation is active, bypass the decimal-count restriction
+      // entirely for both forms of input:
+      //   - Fixed format (no 'e'/'E'): "0.00124" has 5 digits after the point
+      //     but only 3 significant mantissa digits.
+      //   - Sci format: "1.234e5" has 3 mantissa digits while decimals()=2.
+      // In both cases textFromValue() will reformat to the correct precision
+      // (using ctk::significantDecimals or locale().toString(..., 'e', decimals))
+      // when the user commits the value. Rejecting extra digits here would
+      // prevent the user from typing a valid number at all.
+      const bool isInSciMode =
+        (this->Notation == ctkDoubleSpinBox::ScientificNotation ||
+         this->Notation == ctkDoubleSpinBox::AutoNotation);
+
+      if (decimals > q->decimals() && !isInSciMode)
       {
         // With ReplaceDecimals on, key strokes replace decimal digits
         if (posInValue > dec && posInValue < text.size())
@@ -508,7 +551,8 @@ double ctkDoubleSpinBoxPrivate
       }
       // When DecimalsByKey is set, it is possible to extend the number of decimals
       if (decimals > q->decimals() &&
-          !(this->DOption & ctkDoubleSpinBox::DecimalsByKey) )
+          !(this->DOption & ctkDoubleSpinBox::DecimalsByKey) &&
+          !isInSciMode)
       {
         state = QValidator::Invalid;
       }
@@ -595,8 +639,16 @@ void ctkDoubleSpinBoxPrivate::onValueChanged()
   this->InputValue = newValue;
   emit q->valueChanged(newValue);
   // \tbd The string might not make much sense when using proxies.
-  emit q->valueChanged(
-    QString::number(newValue, 'f', this->SpinBox->decimals()));
+  // In scientific notation mode, decimals() is mantissa precision; use
+  // significantDecimals() so the string representation isn't truncated to
+  // zero for small values (e.g. 0.0000123 with decimals=2).
+  int strDecimals = this->SpinBox->decimals();
+  if (this->Notation == ctkDoubleSpinBox::ScientificNotation ||
+      this->Notation == ctkDoubleSpinBox::AutoNotation)
+  {
+    strDecimals = ctk::significantDecimals(newValue, strDecimals);
+  }
+  emit q->valueChanged(QString::number(newValue, 'f', strDecimals));
 }
 
 //-----------------------------------------------------------------------------
@@ -889,7 +941,19 @@ void ctkDoubleSpinBox::setDecimals(int dec)
 double ctkDoubleSpinBox::round(double value) const
 {
   Q_D(const ctkDoubleSpinBox);
-  return QString::number(value, 'f', d->SpinBox->decimals()).toDouble();
+  int dec = d->SpinBox->decimals();
+  if (d->Notation == ctkDoubleSpinBox::ScientificNotation ||
+      d->Notation == ctkDoubleSpinBox::AutoNotation)
+  {
+    // In scientific/auto notation mode, decimals() represents mantissa precision
+    // (e.g. 2 means "1.23e-05"), NOT the number of fixed decimal places.
+    // Rounding a small value like 0.0000123 with 'f' format and only 2 decimal
+    // places collapses it to 0.00, causing compare() to treat it as equal to
+    // 0.0. Use ctk::significantDecimals() to obtain enough fixed decimal places
+    // to faithfully represent the value at its displayed precision.
+    dec = ctk::significantDecimals(value, dec);
+  }
+  return QString::number(value, 'f', dec).toDouble();
 }
 
 //-----------------------------------------------------------------------------
@@ -958,7 +1022,13 @@ void ctkDoubleSpinBox::setValueAlways(double newValue)
   if (valueModified && !signalsEmitted)
   {
     emit valueChanged(d->InputValue);
-    emit valueChanged(QString::number(d->InputValue, 'f', d->SpinBox->decimals()));
+    int strDecimals = d->SpinBox->decimals();
+    if (d->Notation == ctkDoubleSpinBox::ScientificNotation ||
+        d->Notation == ctkDoubleSpinBox::AutoNotation)
+    {
+      strDecimals = ctk::significantDecimals(d->InputValue, strDecimals);
+    }
+    emit valueChanged(QString::number(d->InputValue, 'f', strDecimals));
   }
 }
 
@@ -1067,6 +1137,27 @@ ctkDoubleSpinBox::Notation ctkDoubleSpinBox::notation() const
 {
   Q_D(const ctkDoubleSpinBox);
   return d->Notation;
+}
+
+//----------------------------------------------------------------------------
+void ctkDoubleSpinBox::setNotationThreshold(int threshold)
+{
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent && threshold == d->NotationThreshold)
+  {
+    return;
+  }
+  d->NotationThreshold = threshold;
+  // Invalidate cache and refresh the displayed text.
+  d->CachedText.clear();
+  this->setValueAlways(this->value());
+}
+
+//----------------------------------------------------------------------------
+int ctkDoubleSpinBox::notationThreshold() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  return d->NotationThreshold;
 }
 
 //----------------------------------------------------------------------------

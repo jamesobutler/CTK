@@ -95,6 +95,30 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   /// StandardNotation by default.
   /// \sa Notation, notation(), setNotation()
   Q_PROPERTY(Notation notation READ notation WRITE setNotation)
+  /// This property sets the exponent magnitude threshold at or above which
+  /// scientific notation is used when notation is ScientificNotation.
+  /// Values whose absolute exponent is strictly less than this threshold are
+  /// displayed in fixed-point notation; values at or above it use scientific
+  /// notation. A threshold of 0 means always use scientific
+  /// notation regardless of magnitude. Default is 5.
+  ///
+  /// When a value falls into the fixed-notation range, the number of decimal
+  /// places is determined automatically via ctk::significantDecimals(), using
+  /// the decimals property as a minimum. This ensures that small values such as
+  /// 0.000123 are not truncated to "0.00" when decimals is set for the
+  /// scientific range.
+  ///
+  /// Example: notationThreshold = 5, decimals = 2
+  ///   1,000,000  -> exponent  6 >= 5  -> "1.00e+06"       (scientific, 2 mantissa digits)
+  ///   10,000     -> exponent  4 <  5  -> "10000.00"       (fixed,      2 decimal places)
+  ///   0.001      -> exponent  3 <  5  -> "0.001"          (fixed,      3 decimal places auto)
+  ///   0.000123   -> exponent  4 <  5  -> "0.000123"       (fixed,      6 decimal places auto)
+  ///   0.00001    -> exponent  5 >= 5  -> "1.00e-05"       (scientific, 2 mantissa digits)
+  ///   0          -> exponent  0 <  5  -> "0.00"           (fixed,      2 decimal places)
+  ///
+  /// Only has effect when notation is AutoNotation.
+  /// \sa notation, setNotation(), notationThreshold()
+  Q_PROPERTY(int notationThreshold READ notationThreshold WRITE setNotationThreshold)
 
 public:
 
@@ -172,8 +196,13 @@ public:
   {
     /// Standard decimal notation (e.g. "1000000"). Default.
     StandardNotation,
-    /// Scientific (exponential) notation (e.g. "1e+06").
-    ScientificNotation
+    /// Always use scientific (exponential) notation (e.g. "1.00e+06").
+    ScientificNotation,
+    /// Automatically switch between fixed and scientific notation based on
+    /// the \a notationThreshold property. Values whose absolute exponent is
+    /// less than the threshold use fixed notation; values at or above it use
+    /// scientific notation.
+    AutoNotation
   };
   Q_ENUM(Notation)
 
@@ -298,6 +327,13 @@ public:
   /// Return the notation property value.
   /// \sa notation
   Notation notation()const;
+
+  /// Set the notationThreshold property value.
+  /// \sa notationThreshold
+  void setNotationThreshold(int threshold);
+  /// Return the notationThreshold property value.
+  /// \sa notationThreshold
+  int notationThreshold() const;
 
   /// Install or remove a value proxy filter. The value proxy decouples the
   /// displayed value from the value retrieved by the value property.
